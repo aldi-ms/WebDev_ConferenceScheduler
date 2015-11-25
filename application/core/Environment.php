@@ -1,7 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: scienide
- * Date: 11/25/15
- * Time: 11:56 PM
- */
+
+declare(strict_types=1);
+
+class Environment
+{
+    /**
+     * @return string the application environment
+     */
+    public static function get() : string
+    {
+        return getenv('APPLICATION_ENV') ?? "development";
+    }
+}

@@ -1,7 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: scienide
- * Date: 11/25/15
- * Time: 11:53 PM
- */
+
+declare(strict_types=1);
+
+class Config
+{
+    public static $config;
+
+    public static function get(string $key) : mixed
+    {
+        if (!self::$config) {
+            $config_file = '../application/config/config.' . Environment::get() . '.php';
+
+            if (!file_exists($config_file)) {
+                return false;
+            }
+
+            self::$config = require $config_file;
+        }
+
+        return self::$config[$key];
+    }
+}
