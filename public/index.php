@@ -1,8 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: scienide
- * Date: 11/24/15
- * Time: 11:07 PM
- */
-echo("<h1>Hello world!</h1>");
+
+declare(strict_types=1);
+
+// auto-loading the classes (currently only from application/libs) via Composer's PSR-4 auto-loader
+require '../vendor/autoload.php';
+
+new Application();
