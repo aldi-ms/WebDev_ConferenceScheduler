@@ -7,7 +7,11 @@ class DbFactory
     private static $factory;
     private $database;
 
-    public static function getFactory()
+    /**
+     * Get singleton instance of DbFactory
+     * @return DbFactory
+     */
+    public static function getFactory() : DbFactory
     {
         if (!self::$factory) {
             self::$factory = new DbFactory();
@@ -15,7 +19,11 @@ class DbFactory
         return self::$factory;
     }
 
-    public function getConnection()
+    /**
+     * Construct database connection if necessary and return it.
+     * @return PDO
+     */
+    public function getConnection() : PDO
     {
         if (!$this->database) {
             $options = array(PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ, PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING);

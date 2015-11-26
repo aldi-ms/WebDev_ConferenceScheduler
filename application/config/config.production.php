@@ -32,4 +32,8 @@ return array(
     'COOKIE_SECURE' => false, ///TODO: true for production?
     'COOKIE_HTTP' => true,
     'SESSION_RUNTIME' => 604800, // 1 week
+
+    // encryption settings
+    'ENCRYPTION_KEY' => '960BC02975F3E7C840D191DD9ECA1846449F79255C3E59B7',
+    'HMAC_SALT' => 'C8A456B6F06A485C',
 );

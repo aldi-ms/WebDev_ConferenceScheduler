@@ -13,7 +13,7 @@ ini_set("display_errors", 1);
 ini_set('session.cookie_httponly', 1);
 
 return array(
-    'URL' => 'http://127.0.0.1:8080/',
+    'URL' => 'http://127.0.0.1:8079/',
     'PATH_CONTROLLER' => realpath(dirname(__FILE__) . '/../../') . '/application/controller/',
     'PATH_VIEW' => realpath(dirname(__FILE__) . '/../../') . '/application/view/',
     'DEFAULT_CONTROLLER' => 'index',
@@ -35,4 +35,8 @@ return array(
     'COOKIE_SECURE' => false,
     'COOKIE_HTTP' => true,
     'SESSION_RUNTIME' => 604800, // 1 week
+
+    // encryption settings
+    'ENCRYPTION_KEY' => '960BC02975F3E7C840D191DD9ECA1846449F79255C3E59B7',
+    'HMAC_SALT' => 'C8A456B6F06A485C',
 );
