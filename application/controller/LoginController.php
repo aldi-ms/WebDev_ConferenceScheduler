@@ -11,11 +11,54 @@ class LoginController extends Controller
 
     public function index()
     {
-        ///TODO: implement
+        if (LoginModel::isUserLoggedIn()) {
+            Redirect::home();
+        }
+        else {
+            $data = array('redirect' => Request::get('redirect') ? Request::get('redirect') : NULL);
+            $this->view->render('login/index', $data);
+        }
     }
 
     public function login()
     {
-        ///TODO: implement
+        if (!Csrf::isTokenValid()) {
+            self::logout();
+        }
+
+        $success = LoginModel::login(
+            Request::post('user_name'), Request::post('user_password'), Request::post('set_remember_me_cookie'));
+
+        // check login status: if true, then redirect user login/showProfile, if false, then to login form again
+        if ($success) {
+            if (Request::post('redirect')) {
+                Redirect::to(ltrim(urldecode(Request::post('redirect')), '/'));
+            }
+            else {
+                Redirect::to('login/showProfile');
+            }
+        }
+        else {
+            Redirect::to('login/index');
+        }
+    }
+
+    public function register_action()
+    {
+        $success = RegistrationModel::registerUser();
+
+        if ($success) {
+            Redirect::to('login/index');
+        }
+        else {
+            Redirect::to('login/register');
+        }
+    }
+
+    public function logout()
+    {
+        LoginModel::logout();
+        Redirect::home();
+        exit();
     }
 }

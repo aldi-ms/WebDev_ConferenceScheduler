@@ -33,7 +33,7 @@ class LoginModel
         self::saveUserLoginTimestamp($result->user_name);
         // if user has checked the "remember me" checkbox, then write token into database and into cookie
         if ($setRememberMeCookie) {
-            self::setRememberMeInDBAndCookie($result->user_id);
+            self::setRememberMeDbAndCookie($result->user_id);
         }
 
         // successfully logged in, so we write all necessary data into the session and set "user_logged_in" to true
@@ -44,7 +44,14 @@ class LoginModel
         return true;
     }
 
-    public static function setSuccessfulLoginIntoSession($user_id, $user_name, $user_email, $user_account_type)
+    /**
+     * Pass the login parameters to the session
+     * @param $userId
+     * @param $userName
+     * @param $userEmail
+     * @param $userAccountType
+     */
+    public static function setSuccessfulLoginIntoSession($userId, $userName, $userEmail, $userAccountType)
     {
         Session::init();
 
@@ -52,64 +59,75 @@ class LoginModel
         session_regenerate_id(true);
         $_SESSION = array();
 
-        Session::set('user_id', $user_id);
-        Session::set('user_name', $user_name);
-        Session::set('user_email', $user_email);
-        Session::set('user_account_type', $user_account_type);
+        Session::set('user_id', $userId);
+        Session::set('user_name', $userName);
+        Session::set('user_email', $userEmail);
+        Session::set('user_account_type', $userAccountType);
         Session::set('user_logged_in', true);
 
-        Session::updateSessionId($user_id, session_id());
+        Session::updateSessionId($userId, session_id());
 
         // set session cookie
         setcookie(session_name(), session_id(), time() + Config::get('SESSION_RUNTIME'), Config::get('COOKIE_PATH'),
             Config::get('COOKIE_DOMAIN'), Config::get('COOKIE_SECURE'), Config::get('COOKIE_HTTP'));
     }
 
-        public static function setRememberMeInDBAndCookie($user_id)
+    /**
+     * Set the remember_me option in the database and cookie
+     * @param $userId
+     * @throws Exception
+     */
+    public static function setRememberMeDbAndCookie($userId)
     {
         $database = DbFactory::getFactory()->getConnection();
 
         // generate 64 char random string and write it to database
-        $random_token_string = hash('sha256', mt_rand());
+        $randomToken = hash('sha256', mt_rand());
         $sql = "UPDATE users SET user_remember_me_token = :user_remember_me_token WHERE user_id = :user_id LIMIT 1";
         $query = $database->prepare($sql);
-        $query->execute(array(':user_remember_me_token' => $random_token_string, ':user_id' => $user_id));
+        $query->execute(array(':user_remember_me_token' => $randomToken, ':user_id' => $userId));
 
-        $cookie_string_first_part = Encryption::encrypt($user_id) . ':' . $random_token_string;
-        $cookie_string_hash = hash('sha256', $user_id . ':' . $random_token_string);
-        $cookie_string = $cookie_string_first_part . ':' . $cookie_string_hash;
+        $cookieStringFirst = Encryption::encrypt($userId) . ':' . $randomToken;
+        $hashString = hash('sha256', $userId . ':' . $randomToken);
+        $cookieString = $cookieStringFirst . ':' . $hashString;
 
-        setcookie('remember_me', $cookie_string, time() + Config::get('COOKIE_RUNTIME'), Config::get('COOKIE_PATH'),
+        setcookie('remember_me', $cookieString, time() + Config::get('COOKIE_RUNTIME'), Config::get('COOKIE_PATH'),
             Config::get('COOKIE_DOMAIN'), Config::get('COOKIE_SECURE'), Config::get('COOKIE_HTTP'));
     }
 
 
-    public static function saveUserLoginTimestamp($user_name)
+    public static function saveUserLoginTimestamp($userName)
     {
         $database = DbFactory::getFactory()->getConnection();
         $sql = "UPDATE users SET user_last_login_timestamp = :user_last_login_timestamp
                 WHERE user_name = :user_name LIMIT 1";
         $query = $database->prepare($sql);
-        $query->execute(array(':user_name' => $user_name, ':user_last_login_timestamp' => time()));
+        $query->execute(array(':user_name' => $userName, ':user_last_login_timestamp' => time()));
     }
 
 
+    /**
+     * Logout the user, clear session
+     */
     public static function logout()
     {
-        $user_id = Session::get('user_id');
-        self::deleteCookie($user_id);
+        $userId = Session::get('user_id');
+        self::deleteCookie($userId);
         Session::destroy();
-        Session::updateSessionId($user_id);
+        Session::updateSessionId($userId);
     }
 
-    public static function deleteCookie($user_id = null)
+    /**
+     * Clear remember_me cookie and update database if $userId was provided
+     * @param null $userId
+     */
+    public static function deleteCookie($userId = null)
     {
-        // is $user_id was set, then clear remember_me token in database
-        if(isset($user_id)){
+        if(isset($userId)){
             $database = DbFactory::getFactory()->getConnection();
             $sql = "UPDATE users SET user_remember_me_token = :user_remember_me_token WHERE user_id = :user_id LIMIT 1";
             $query = $database->prepare($sql);
-            $query->execute(array(':user_remember_me_token' => NULL, ':user_id' => $user_id));
+            $query->execute(array(':user_remember_me_token' => NULL, ':user_id' => $userId));
         }
         
         // delete remember_me cookie in browser
@@ -117,6 +135,10 @@ class LoginModel
             Config::get('COOKIE_DOMAIN'), Config::get('COOKIE_SECURE'), Config::get('COOKIE_HTTP'));
     }
 
+    /**
+     * Reset the failed login attempts counter (once the user has been validated)
+     * @param $userName
+     */
     public static function resetUserFailedLoginCounter($userName)
     {
         $database = DbFactory::getFactory()->getConnection();
@@ -128,6 +150,21 @@ class LoginModel
         $query->execute(array(':user_name' => $userName));
     }
 
+    /**
+     * @return bool
+     */
+    public static function isUserLoggedIn() : bool
+    {
+        return Session::userIsLoggedIn();
+    }
+
+    /**
+     * Validate the user against the DB, or increment the "failed-login-count" to prevent
+     * bruteforce password/user attacks
+     * @param $userName
+     * @param $userPassword
+     * @return bool
+     */
     private static function validateUser($userName, $userPassword) : bool
     {
         if (Session::get('failed-login-count') >= 3 && Session::get('last-failed-login') > (time() - 30)) {
@@ -138,7 +175,7 @@ class LoginModel
         $result = UserModel::getUserByName($userName);
 
         if (!$result) {
-            self::incrementUserNotFoundCounter();
+            self::incrementUserFailedLoginCount();
             Session::push("feedback-negative", Text::get("USERNAME_OR_PASSWORD_WRONG"));
             return false;
         }
@@ -149,28 +186,38 @@ class LoginModel
         }
 
         if (!password_verify($userPassword, $result->user_password_hash)) {
-            self::incrementUserFailedLoginCounter($result->user_name);
+            self::incrementUserFailedLoginCountInDb($result->user_name);
             Session::push('feedback_negative', Text::get('USERNAME_OR_PASSWORD_WRONG'));
             return false;
         }
 
-        self::resetUserNotFoundCounter();
+        self::resetUserFailedLoginCount();
         return $result;
     }
 
-    private static function incrementUserNotFoundCounter()
+    /**
+     * Increment the session failed-login-count
+     */
+    private static function incrementUserFailedLoginCount()
     {
         Session::set('failed-login-count', Session::get('failed-login-count') + 1);
         Session::set('last-failed-login', time());
     }
 
-    private static function resetUserNotFoundCounter()
+    /**
+     * Resets session failed-login-count
+     */
+    private static function resetUserFailedLoginCount()
     {
         Session::set('failed-login-count', 0);
         Session::set('last-failed-login', '');
     }
 
-    private static function incrementUserFailedLoginCounter($userName)
+    /**
+     * Increment the user failed-login-count in the database
+     * @param $userName
+     */
+    private static function incrementUserFailedLoginCountInDb($userName)
     {
         $database = DbFactory::getFactory()->getConnection();
         $sql = "UPDATE users

@@ -75,7 +75,7 @@ class Session
      * (e.g. two users logged in with the same account)
      * @return bool
      */
-    public static function isConcurrentSession() : bool
+    public static function concurrentSessionsExist() : bool
     {
         $sessionId = session_id();
         $userId = Session::get('user_id');
@@ -96,6 +96,9 @@ class Session
         return false;
     }
 
+    /**
+     * Destroy/clear the session
+     */
     public static function destroy()
     {
         session_destroy();

@@ -10,7 +10,7 @@ ini_set("error_log", "syslog");
 ini_set('session.cookie_httponly', 1);
 
 return array(
-    'URL' => 'http://192.168.0.101/', /// TODO: change to get dynamically
+    'URL' => 'http://' . $_SERVER['HTTP_HOST'] . str_replace('public', '', dirname($_SERVER['SCRIPT_NAME'])),
     'PATH_CONTROLLER' => realpath(dirname(__FILE__) . '/../../') . '/application/controller/',
     'PATH_VIEW' => realpath(dirname(__FILE__) . '/../../') . '/application/view/',
     'DEFAULT_CONTROLLER' => 'index',

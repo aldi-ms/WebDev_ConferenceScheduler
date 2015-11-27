@@ -13,7 +13,7 @@ ini_set("display_errors", 1);
 ini_set('session.cookie_httponly', 1);
 
 return array(
-    'URL' => 'http://127.0.0.1:8079/',
+    'URL' => 'http://' . $_SERVER['HTTP_HOST'] . str_replace('public', '', dirname($_SERVER['SCRIPT_NAME'])),
     'PATH_CONTROLLER' => realpath(dirname(__FILE__) . '/../../') . '/application/controller/',
     'PATH_VIEW' => realpath(dirname(__FILE__) . '/../../') . '/application/view/',
     'DEFAULT_CONTROLLER' => 'index',

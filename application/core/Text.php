@@ -6,10 +6,15 @@ class Text
 {
     private static $texts;
 
-    public static function get($key)
+    /**
+     * Get a string from config/texts.php
+     * @param $key
+     * @return string
+     */
+    public static function get($key) : string
     {
         if (!$key) {
-            return null;
+            return "";
         }
 
         if (!self::$texts) {
@@ -17,7 +22,7 @@ class Text
         }
 
         if (!array_key_exists($key, self::$texts)) {
-            return null;
+            return "";
         }
 
         return self::$texts[$key];

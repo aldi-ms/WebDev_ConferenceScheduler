@@ -21,4 +21,16 @@ class View
         require Config::get('PATH_VIEW') . 'templates/footer.php';
     }
 
+    /**
+     * Render feedback messages in the view
+     */
+    public function renderFeedbackMessages()
+    {
+        // feedback messages are in "feedback_positive" and "feedback_negative"
+        require Config::get('PATH_VIEW') . 'templates/feedback.php';
+
+        // delete the messages
+        Session::set('feedback_positive', null);
+        Session::set('feedback_negative', null);
+    }
 }
