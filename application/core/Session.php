@@ -27,15 +27,15 @@ class Session
     /**
      * Gets the value of of the specified key
      * @param $key
-     * @return mixed
+     * @return string
      */
-    public static function get($key) : mixed
+    public static function get($key) : string
     {
         if (isset($_SESSION[$key])) {
             return $_SESSION[$key];
         }
 
-        return null;
+        return "";
     }
 
     /**

@@ -20,15 +20,15 @@ class Request
 
     /**
      * @param string $key
-     * @return mixed the value of the key, or null if it doesn't exist
+     * @return string the value of the key, or null if it doesn't exist
      */
-    public static function get(string $key) : mixed
+    public static function get(string $key) : string
     {
         if (isset($_GET[$key])) {
             return $_GET[$key];
         }
 
-        return null;
+        return "";
     }
 
     /**

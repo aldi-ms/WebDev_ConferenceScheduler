@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 // error reporting
 error_reporting(E_ALL);
-ini_set("display_errors", 1);
+ini_set("display_errors", "1");
 
-ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_httponly', "1");
 
 return array(
     'URL' => 'http://' . $_SERVER['HTTP_HOST'] . str_replace('public', '', dirname($_SERVER['SCRIPT_NAME'])),
