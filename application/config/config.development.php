@@ -22,10 +22,10 @@ return array(
     // database settings
     'DB_TYPE' => 'mysql',
     'DB_HOST' => '127.0.0.1',
-    'DB_NAME' => 'ConfScheduler',
+    'DB_NAME' => 'confscheduler',
     'DB_USER' => 'root',
-    'DB_PASS' => '123456',
-    'DB_PORT' => '3306',
+    'DB_PASS' => '92jigsaw',
+    'DB_PORT' => '3305',
     'DB_CHARSET' => 'utf8',
 
     // cookie settings

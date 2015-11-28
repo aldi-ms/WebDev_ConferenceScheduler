@@ -6,10 +6,10 @@ class UserModel
 {
     /**
      * Get user data from the database
-     * @param $userName
-     * @return mixed false if the user does not exist, otherwise the user's data
+     * @param string $userName
+     * @return mixed
      */
-    public static function getUserByName(string $userName) : mixed
+    public static function getUserByName(string $userName)
     {
         $database = DbFactory::getFactory()->getConnection();
         $sql = "SELECT user_id, user_name, user_email, user_password_hash, user_deleted,
@@ -74,7 +74,7 @@ class UserModel
         $query = $database->prepare($sql);
         $query->execute(array(':user_name' => $user_name));
 
-        return $query->fetch()->user_id;
+        return (int)$query->fetch()->user_id;
     }
 
     /**

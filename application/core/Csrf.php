@@ -1,21 +1,15 @@
 <?php
 
-declare(strict_types = 1);
-
-
 class Csrf
 {
     /**
      * Get CSRF token and generate a new one if expired
-     * @access public
-     * @static static method
-     * @return string
      */
-    public static function makeToken() : string
+    public static function makeToken()
     {
-        $maxTime    = 60 * 60 * 24; // token is valid for 1 day
+        $maxTime = 60 * 60 * 24; // 1 day
         $storedTime = Session::get('csrf_token_time');
-        $csrfToken  = Session::get('csrf_token');
+        $csrfToken = Session::get('csrf_token');
 
         if($maxTime + $storedTime <= time() || empty($csrfToken)){
             Session::set('csrf_token', md5(uniqid(rand(), true)));
@@ -27,11 +21,8 @@ class Csrf
 
     /**
      * Checks if CSRF token in session is same as in the form submitted
-     * @access public
-     * @static static method
-     * @return bool
      */
-    public static function isTokenValid() : bool
+    public static function isTokenValid()
     {
         $token = Request::post('csrf_token');
         return $token === Session::get('csrf_token') && !empty($token);

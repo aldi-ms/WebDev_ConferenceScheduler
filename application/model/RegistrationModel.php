@@ -141,19 +141,19 @@ class RegistrationModel
     }
 
     /**
-     * Create user in the database
-     * @param $userName
-     * @param $userPasswordHash
-     * @param $userEmail
-     * @param $userCreationTimestamp
+     * Create new user in the database
+     * @param string $userName
+     * @param string $userPasswordHash
+     * @param string $userEmail
+     * @param int $userCreationTimestamp
      * @return bool
      */
-    public static function createUserInDb(string $userName, string $userPasswordHash, string $userEmail, string $userCreationTimestamp)
+    public static function createUserInDb(string $userName, string $userPasswordHash, string $userEmail, int $userCreationTimestamp) : bool
     {
         $database = DbFactory::getFactory()->getConnection();
 
         // write new users data into database
-        $sql = "INSERT INTO users (user_name, user_password_hash, user_email, user_creation_timestamp, user_activation_hash, user_provider_type)
+        $sql = "INSERT INTO users (user_name, user_password_hash, user_email, user_creation_timestamp)
                     VALUES (:user_name, :user_password_hash, :user_email, :user_creation_timestamp)";
         $query = $database->prepare($sql);
         $query->execute(array(':user_name' => $userName,

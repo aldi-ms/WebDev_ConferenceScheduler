@@ -6,41 +6,33 @@ class Request
 {
     /**
      * @param string $key
-     * @param bool|false $clean indicates whether to clean the var
-     * @return mixed the value of the key, or null if it doesn't exist
+     * @param bool|false $clean Indicates whether to clean the var
+     * @return string
      */
-    public static function post(string $key, bool $clean = false) : mixed
+    public static function post(string $key, bool $clean = false) : string
     {
         if (isset($_POST[$key])) {
             return ($clean) ? trim(strip_tags($_POST[$key])) : $_POST[$key];
         }
 
-        return null;
+        return "";
     }
 
-    /**
-     * @param string $key
-     * @return string the value of the key, or null if it doesn't exist
-     */
-    public static function get(string $key) : string
+    public static function get(string $key)
     {
         if (isset($_GET[$key])) {
             return $_GET[$key];
         }
 
-        return "";
+        return null;
     }
 
-    /**
-     * @param string $key
-     * @return string the value of the key, or null if it doesn't exist
-     */
-    public static function cookie(string $key) : string
+    public static function cookie(string $key)
     {
         if (isset($_COOKIE[$key])) {
             return $_COOKIE[$key];
         }
 
-        return "";
+        return null;
     }
 }

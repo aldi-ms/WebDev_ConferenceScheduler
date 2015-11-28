@@ -19,7 +19,7 @@ return array(
     // database settings
     'DB_TYPE' => 'mysql',
     'DB_HOST' => '127.0.0.1',   /// TODO: check DB_HOST for production env
-    'DB_NAME' => 'ConfScheduler',
+    'DB_NAME' => 'confscheduler',
     'DB_USER' => 'root',
     'DB_PASS' => '',
     'DB_PORT' => '3306',

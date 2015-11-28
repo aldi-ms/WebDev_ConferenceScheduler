@@ -4,7 +4,13 @@ declare(strict_types = 1);
 
 class LoginModel
 {
-    public static function login(string $userName, string $userPassword, bool $setRememberMeCookie = null) : bool
+    /**
+     * @param string $userName
+     * @param string $userPassword
+     * @param string|null $setRememberMeCookie
+     * @return bool
+     */
+    public static function login(string $userName, string $userPassword, string $setRememberMeCookie = null) : bool
     {
         if (empty($userName) || empty($userPassword)) {
             Session::push("feedback_negative", Text::get('USERNAME_OR_PASSWORD_FIELD_EMPTY'));
@@ -95,7 +101,6 @@ class LoginModel
             Config::get('COOKIE_DOMAIN'), Config::get('COOKIE_SECURE'), Config::get('COOKIE_HTTP'));
     }
 
-
     public static function saveUserLoginTimestamp($userName)
     {
         $database = DbFactory::getFactory()->getConnection();
@@ -131,7 +136,7 @@ class LoginModel
         }
         
         // delete remember_me cookie in browser
-        setcookie('remember_me', false, time() - (3600 * 24 * 3650), Config::get('COOKIE_PATH'),
+        setcookie('remember_me', '', time() - (3600 * 24 * 3650), Config::get('COOKIE_PATH'),
             Config::get('COOKIE_DOMAIN'), Config::get('COOKIE_SECURE'), Config::get('COOKIE_HTTP'));
     }
 
@@ -159,6 +164,7 @@ class LoginModel
     }
 
     /**
+     * Login the user with previously set cookie
      * @param string $cookie
      * @return bool
      * @throws Exception
@@ -170,14 +176,13 @@ class LoginModel
             return false;
         }
 
-        // before list(), check it can be split into 3 strings.
-        if(count (explode(':', $cookie)) !== 3){
+        // check if cookie can be split into 3 parts
+        if(count(explode(':', $cookie)) !== 3){
             Session::push('feedback_negative', Text::get('FEEDBACK_COOKIE_INVALID'));
             return false;
         }
 
-        // check cookie's contents, check if cookie contents belong together or token is empty
-        list ($user_id, $token, $hash) = explode(':', $cookie);
+        list($user_id, $token, $hash) = explode(':', $cookie);
 
         // decrypt user id
         $user_id = Encryption::decrypt($user_id);
@@ -190,16 +195,11 @@ class LoginModel
         // get data of user that has this id and this token
         $result = UserModel::getUserDataByUserIdAndToken($user_id, $token);
 
-        // if user with that id and exactly that cookie token exists in database
         if ($result) {
-            // successfully logged in, so we write all necessary data into the session and set "user_logged_in" to true
+            // successfully logged in
             self::setSuccessfulLoginIntoSession($result->user_id, $result->user_name, $result->user_email, $result->user_account_type);
-            // save timestamp of this login in the database line of that user
+            // save timestamp of this login
             self::saveTimestampOfLoginOfUser($result->user_name);
-
-            // NOTE: we don't set another remember_me-cookie here as the current cookie should always
-            // be invalid after a certain amount of time, so the user has to login with username/password
-            // again from time to time. This is good and safe ! ;)
 
             Session::push('feedback_positive', Text::get('COOKIE_LOGIN_SUCCESSFUL'));
             return true;
@@ -225,11 +225,11 @@ class LoginModel
     /**
      * Validate the user against the DB, or increment the "failed-login-count" to prevent
      * bruteforce password/user attacks
-     * @param $userName
-     * @param $userPassword
-     * @return bool
+     * @param string $userName
+     * @param string $userPassword
+     * @return mixed
      */
-    private static function validateUser($userName, $userPassword) : bool
+    private static function validateUser(string $userName, string $userPassword)
     {
         if (Session::get('failed-login-count') >= 3 && Session::get('last-failed-login') > (time() - 30)) {
             Session::push('feedback_negative', Text::get("LOGIN_FAILED_ATTEMPTS"));

@@ -55,6 +55,15 @@ class LoginController extends Controller
         }
     }
 
+    public function register()
+    {
+        if (LoginModel::isUserLoggedIn()) {
+            Redirect::home();
+        } else {
+            $this->view->render('login/register');
+        }
+    }
+
     public function logout()
     {
         LoginModel::logout();
@@ -66,13 +75,25 @@ class LoginController extends Controller
     {
         $success = LoginModel::loginWithCookie(Request::cookie('remember_me'));
 
-        // if login successful, redirect to dashboard/index ...
         if ($success) {
             Redirect::to('dashboard/index');
         } else {
-            // if not, delete cookie (outdated? attack?) and route user to login form to prevent infinite login loops
             LoginModel::deleteCookie();
             Redirect::to('login/index');
         }
+    }
+
+    /**
+     * Show user profile
+     * Auth::checkAuthentication() makes sure that only logged in users can use this action and see this page
+     */
+    public function showProfile()
+    {
+        Auth::checkAuthentication();
+        $this->view->render('login/showProfile', array(
+            'user_name' => Session::get('user_name'),
+            'user_email' => Session::get('user_email'),
+            'user_account_type' => Session::get('user_account_type')
+        ));
     }
 }

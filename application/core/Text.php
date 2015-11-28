@@ -18,7 +18,7 @@ class Text
         }
 
         if (!self::$texts) {
-            self::$texts = require('../config/texts.php');
+            self::$texts = require('../application/config/texts.php');
         }
 
         if (!array_key_exists($key, self::$texts)) {

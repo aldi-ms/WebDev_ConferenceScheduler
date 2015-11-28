@@ -31,11 +31,15 @@ class Application
                     $this->controller->{$this->actionName}();
                 }
             } else {
-                echo("Error 404");
+                require Config::get('PATH_CONTROLLER') . 'ErrorController.php';
+                $this->controller = new ErrorController;
+                $this->controller->error404();
             }
         }
         else {
-            echo("Error 404");
+            require Config::get('PATH_CONTROLLER') . 'ErrorController.php';
+            $this->controller = new ErrorController;
+            $this->controller->error404();
         }
     }
 

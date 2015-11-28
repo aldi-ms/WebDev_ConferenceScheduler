@@ -10,6 +10,8 @@ class Controller
     {
         Session::init();
 
+        Auth::checkSessionConcurrency();
+
         if (!Session::userIsLoggedIn() && Request::cookie('remember_me')) {
             Redirect::to("login/loginWithCookie");
         }

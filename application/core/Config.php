@@ -6,7 +6,7 @@ class Config
 {
     public static $config;
 
-    public static function get(string $key) : string
+    public static function get(string $key)
     {
         if (!self::$config) {
             $config_file = '../application/config/config.' . Environment::get() . '.php';
