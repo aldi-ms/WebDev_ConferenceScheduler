@@ -16,15 +16,10 @@ class View
                 $this->{$key} = $value;
             }
         }
-        $path = Config::get('PATH_VIEW') . 'templates/header.php';
-        require $path;
-        var_dump($path);
-        $path = Config::get('PATH_VIEW') . $filename . '.php';
-        require $path;
-        var_dump($path);
-        $path = Config::get('PATH_VIEW') . 'templates/footer.php';
-        require $path;
-        var_dump($path);
+
+        require Config::get('PATH_VIEW') . 'templates/header.php';
+        require Config::get('PATH_VIEW') . $filename . '.php';
+        require Config::get('PATH_VIEW') . 'templates/footer.php';
     }
 
     /**

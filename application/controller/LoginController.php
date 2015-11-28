@@ -61,4 +61,18 @@ class LoginController extends Controller
         Redirect::home();
         exit();
     }
+
+    public function loginWithCookie()
+    {
+        $success = LoginModel::loginWithCookie(Request::cookie('remember_me'));
+
+        // if login successful, redirect to dashboard/index ...
+        if ($success) {
+            Redirect::to('dashboard/index');
+        } else {
+            // if not, delete cookie (outdated? attack?) and route user to login form to prevent infinite login loops
+            LoginModel::deleteCookie();
+            Redirect::to('login/index');
+        }
+    }
 }

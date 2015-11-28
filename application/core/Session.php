@@ -24,18 +24,13 @@ class Session
         $_SESSION[$key] = $value;
     }
 
-    /**
-     * Gets the value of of the specified key
-     * @param $key
-     * @return string
-     */
-    public static function get($key) : string
+    public static function get($key)
     {
         if (isset($_SESSION[$key])) {
             return $_SESSION[$key];
         }
 
-        return "";
+        return null;
     }
 
     /**

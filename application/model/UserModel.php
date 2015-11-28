@@ -12,8 +12,8 @@ class UserModel
     public static function getUserByName(string $userName) : mixed
     {
         $database = DbFactory::getFactory()->getConnection();
-        $sql = "SELECT user_id, user_name, user_email, user_password_hash, user_active, user_deleted,
-                user_suspension_timestamp, user_account_type, user_failed_logins, user_last_failed_login
+        $sql = "SELECT user_id, user_name, user_email, user_password_hash, user_deleted,
+                  user_account_type, user_failed_logins, user_last_failed_login
                   FROM users
                  WHERE user_name = :user_name
                  LIMIT 1";
@@ -75,5 +75,25 @@ class UserModel
         $query->execute(array(':user_name' => $user_name));
 
         return $query->fetch()->user_id;
+    }
+
+    /**
+     * @param $userId
+     * @param $token
+     * @return mixed
+     */
+    public static function getUserDataByUserIdAndToken(int $userId, string $token) : mixed
+    {
+        $database = DbFactory::getFactory()->getConnection();
+        $query = $database->prepare("SELECT user_id, user_name, user_email, user_password_hash,
+                                          user_account_type, user_failed_logins, user_last_failed_login
+                                     FROM users
+                                     WHERE user_id = :user_id
+                                       AND user_remember_me_token = :user_remember_me_token
+                                       AND user_remember_me_token IS NOT NULL
+                                     LIMIT 1");
+        $query->execute(array(':user_id' => $userId, ':user_remember_me_token' => $token));
+
+        return $query->fetch();
     }
 }

@@ -10,8 +10,8 @@ class Controller
     {
         Session::init();
 
-        if (!Session::userIsLoggedIn()) {
-            Redirect::to("login/login");
+        if (!Session::userIsLoggedIn() && Request::cookie('remember_me')) {
+            Redirect::to("login/loginWithCookie");
         }
 
         $this->view = new View();

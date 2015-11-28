@@ -33,14 +33,14 @@ class Request
 
     /**
      * @param string $key
-     * @return mixed the value of the key, or null if it doesn't exist
+     * @return string the value of the key, or null if it doesn't exist
      */
-    public static function cookie(string $key) : mixed
+    public static function cookie(string $key) : string
     {
         if (isset($_COOKIE[$key])) {
             return $_COOKIE[$key];
         }
 
-        return null;
+        return "";
     }
 }

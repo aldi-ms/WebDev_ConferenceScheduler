@@ -6,33 +6,36 @@ class Application
 {
     private $controller;
     private $parameters = array();
-    private $controller_name;
-    private $action_name;
+    private $controllerName;
+    private $actionName;
 
     public function __construct()
     {
         $this->splitUrl();
         $this->createControllerAndActionNames();
+        if (file_exists(Config::get('PATH_CONTROLLER') . $this->controllerName . '.php')) {
 
-        if (file_exists(Config::get('PATH_CONTROLLER') . $this->controller_name . '.php')) {
+            // load this file and create this controller
+            // example: if controller would be "car", then this line would translate into: $this->car = new car();
+            require Config::get('PATH_CONTROLLER') . $this->controllerName . '.php';
+            $this->controller = new $this->controllerName();
 
-            require Config::get('PATH_CONTROLLER') . $this->controller_name . '.php';
-            $this->controller = new $this->controller_name();
+            // check for method: does such a method exist in the controller ?
+            if (method_exists($this->controller, $this->actionName)) {
 
-            if (method_exists($this->controller, $this->action_name)) {
                 if (!empty($this->parameters)) {
-                    call_user_func_array(array($this->controller, $this->action_name), $this->parameters);
+                    // call the method and pass arguments to it
+                    call_user_func_array(array($this->controller, $this->actionName), $this->parameters);
+                } else {
+                    // if no parameters are given, just call the method without parameters, like $this->index->index();
+                    $this->controller->{$this->actionName}();
                 }
-                else {
-                    $this->controller->{$this->action_name}();
-                }
-            }
-            else {
-                // ex.
+            } else {
+                echo("Error 404");
             }
         }
         else {
-            // ex.
+            echo("Error 404");
         }
     }
 
@@ -44,8 +47,8 @@ class Application
             $url = explode('/', $url);
 
             // set the controller and action names
-            $this->controller_name = $url[0] ?? null;
-            $this->action_name = $url[1] ?? null;
+            $this->controllerName = $url[0] ?? null;
+            $this->actionName = $url[1] ?? null;
 
             // remove them from $url array
             unset($url[0], $url[1]);
@@ -57,14 +60,14 @@ class Application
 
     private function createControllerAndActionNames()
     {
-        if (!$this->controller_name) {
-            $this->controller_name = Config::get('DEFAULT_CONTROLLER');
+        if (!$this->controllerName) {
+            $this->controllerName = Config::get('DEFAULT_CONTROLLER');
         }
 
-        if (!$this->action_name || (strlen($this->action_name) == 0)) {
-            $this->action_name = Config::get('DEFAULT_ACTION');
+        if (!$this->actionName || (strlen($this->actionName) == 0)) {
+            $this->actionName = Config::get('DEFAULT_ACTION');
         }
 
-        $this->controller_name = ucwords($this->controller_name) . 'Controller';
+        $this->controllerName = ucwords($this->controllerName) . 'Controller';
     }
 }

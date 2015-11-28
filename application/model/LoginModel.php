@@ -159,6 +159,70 @@ class LoginModel
     }
 
     /**
+     * @param string $cookie
+     * @return bool
+     * @throws Exception
+     */
+    public static function loginWithCookie(string $cookie) : bool
+    {
+        if (!$cookie) {
+            Session::push('feedback_negative', Text::get('FEEDBACK_COOKIE_INVALID'));
+            return false;
+        }
+
+        // before list(), check it can be split into 3 strings.
+        if(count (explode(':', $cookie)) !== 3){
+            Session::push('feedback_negative', Text::get('FEEDBACK_COOKIE_INVALID'));
+            return false;
+        }
+
+        // check cookie's contents, check if cookie contents belong together or token is empty
+        list ($user_id, $token, $hash) = explode(':', $cookie);
+
+        // decrypt user id
+        $user_id = Encryption::decrypt($user_id);
+
+        if ($hash !== hash('sha256', $user_id . ':' . $token) OR empty($token) OR empty($user_id)) {
+            Session::push('feedback_negative', Text::get('COOKIE_INVALID'));
+            return false;
+        }
+
+        // get data of user that has this id and this token
+        $result = UserModel::getUserDataByUserIdAndToken($user_id, $token);
+
+        // if user with that id and exactly that cookie token exists in database
+        if ($result) {
+            // successfully logged in, so we write all necessary data into the session and set "user_logged_in" to true
+            self::setSuccessfulLoginIntoSession($result->user_id, $result->user_name, $result->user_email, $result->user_account_type);
+            // save timestamp of this login in the database line of that user
+            self::saveTimestampOfLoginOfUser($result->user_name);
+
+            // NOTE: we don't set another remember_me-cookie here as the current cookie should always
+            // be invalid after a certain amount of time, so the user has to login with username/password
+            // again from time to time. This is good and safe ! ;)
+
+            Session::push('feedback_positive', Text::get('COOKIE_LOGIN_SUCCESSFUL'));
+            return true;
+        } else {
+            Session::push('feedback_negative', Text::get('FEEDBACK_COOKIE_INVALID'));
+            return false;
+        }
+    }
+
+    /**
+     * @param $userName
+     */
+    public static function saveTimestampOfLoginOfUser($userName)
+    {
+        $database = DbFactory::getFactory()->getConnection();
+
+        $sql = "UPDATE users SET user_last_login_timestamp = :user_last_login_timestamp
+                    WHERE user_name = :user_name LIMIT 1";
+        $sth = $database->prepare($sql);
+        $sth->execute(array(':user_name' => $userName, ':user_last_login_timestamp' => time()));
+    }
+
+    /**
      * Validate the user against the DB, or increment the "failed-login-count" to prevent
      * bruteforce password/user attacks
      * @param $userName
