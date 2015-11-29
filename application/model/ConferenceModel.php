@@ -60,7 +60,7 @@ class ConferenceModel
     {
         $database = DbFactory::getFactory()->getConnection();
 
-        // write new users data into database
+        // write conference data into database
         $sql = "UPDATE conferences SET title = :title, venue_id = :venue_id, conference_owner_id = :conference_owner_id
               WHERE conference_id = :conference_id
               LIMIT 1";

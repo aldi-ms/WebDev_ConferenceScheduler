@@ -29,7 +29,10 @@
         </div>
         <div class="panel-footer"><small>Created by: <?= $data[0]["created_by_user_name"]; ?></small></div>
     </div>
-        <input type="submit" value="Save" class="btn btn-danger" />
-        <a href="<?php echo Config::get('URL'); ?>conference" class="btn btn-primary">Cancel</a>
+        <div class="btn-group">
+            <input type="submit" value="Save" class="btn btn-danger" />
+            <a href="<?php echo Config::get('URL'); ?>conference" class="btn btn-primary">Cancel</a>
+        </div>
+        <a href="<?php echo Config::get('URL'); ?>lecture/create/<?= $data[0]["conference_id"]; ?>" class="btn btn-primary">Add Lecture</a>
     </form>
 </div>
