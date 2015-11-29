@@ -1,13 +1,12 @@
 <div class="container">
-    <h1>DashboardController/index</h1>
     <div class="box">
 
         <!-- echo out the system feedback (error and success messages) -->
         <?php $this->renderFeedbackMessages(); ?>
 
-        <h3>What happens here ?</h3>
+        <h3>Dashboard</h3>
         <p>
-            This is an area that's only visible for logged in users.
+            You are logged in. Please select link from the top.
         <p>
     </div>
 </div>

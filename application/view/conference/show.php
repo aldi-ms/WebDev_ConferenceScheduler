@@ -1,4 +1,4 @@
-<div class="page-header">
+<div class="page-header text-center">
     <h1>Conference Showcase</h1>
 </div>
 <div class="container">

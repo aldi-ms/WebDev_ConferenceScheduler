@@ -36,4 +36,27 @@ class ConferenceController extends Controller
         $data = ConferenceModel::getConferenceById((int)$confId);
         $this->view->render('conference/show', $data);
     }
+
+    public function edit(string $confId)
+    {
+        $data = ConferenceModel::getConferenceById((int)$confId);
+        $this->view->render('conference/edit', $data);
+    }
+
+    public function delete(string $confId)
+    {
+        ConferenceModel::deleteConferenceFromDB((int)$confId);
+        Redirect::to('conference/index');
+    }
+
+    public function edit_action(string $confId)
+    {
+        $success = ConferenceModel::updateConference((int)$confId);
+
+        if ($success) {
+            Redirect::to('conference/index');
+        } else {
+            Redirect::to('conference/edit/'.$confId);
+        }
+    }
 }

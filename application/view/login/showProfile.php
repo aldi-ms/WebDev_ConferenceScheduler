@@ -1,18 +1,25 @@
 <div class="container">
-    <h1>LoginController/showProfile</h1>
+    <div class="page-header">
+        <h1>Profile info</h1>
+    </div>
+    <!-- echo out the system feedback (error and success messages) -->
+    <?php $this->renderFeedbackMessages(); ?>
 
-    <div class="box">
-        <h2>Your profile</h2>
+    <div class="pull-left col-xs-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Your profile</h3>
+            </div>
+            <div class="panel-body">
+                <div>Your username: <strong style="padding-left:1em;"><?= $this->user_name; ?></strong></div>
+                <div>Your email: <strong style="padding-left:1em;"><?= $this->user_email; ?></strong></div>
+                <div>Your account type is: <strong style="padding-left:1em;"><?php if ($this->user_account_type == 1) {
+                        echo 'user';
+                    } elseif ($this->user_account_type == 7) {
+                        echo 'site administrator';
+                    } ?></strong></div>
+            </div>
+        </div>
 
-        <!-- echo out the system feedback (error and success messages) -->
-        <?php $this->renderFeedbackMessages(); ?>
-
-        <div>Your username: <?= $this->user_name; ?></div>
-        <div>Your email: <?= $this->user_email; ?></div>
-        <div>Your account type is: <?php if ($this->user_account_type == 1) {
-                echo 'user';
-            } elseif ($this->user_account_type == 7) {
-                echo 'site administrator';
-            } ?></div>
     </div>
 </div>

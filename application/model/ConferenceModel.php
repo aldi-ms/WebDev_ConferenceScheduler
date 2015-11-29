@@ -21,6 +21,22 @@ class ConferenceModel
         return self::createConferenceInDb($conferenceTitle, (int)$venue->venue_id, (int)Session::get('user_id'));
     }
 
+    public static function updateConference(int $confId) : bool
+    {
+        Auth::checkAuthentication();
+
+        $conferenceTitle = Request::post("conference_title", true);
+        $conferenceVenueName = Request::post("conference_venue", true);
+
+        if (!self::validateConference($conferenceTitle, $conferenceVenueName)) {
+            return false;
+        }
+
+        $venue = VenueModel::getVenueByName($conferenceVenueName);
+
+        return self::updateConferenceInDb($confId, $conferenceTitle, (int)$venue->venue_id, (int)Session::get('user_id'));
+    }
+
     public static function createConferenceInDb(string $conferenceTitle, int $conferenceVenueId, int $conferenceOwnerId) : bool
     {
         $database = DbFactory::getFactory()->getConnection();
@@ -32,6 +48,46 @@ class ConferenceModel
         $query->execute(array(':title' => $conferenceTitle,
             ':venue_id' => $conferenceVenueId,
             ':conference_owner_id' => $conferenceOwnerId));
+        $count =  $query->rowCount();
+        if ($count == 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function updateConferenceInDb(int $confId, string $conferenceTitle, int $conferenceVenueId, int $conferenceOwnerId) : bool
+    {
+        $database = DbFactory::getFactory()->getConnection();
+
+        // write new users data into database
+        $sql = "UPDATE conferences SET title = :title, venue_id = :venue_id, conference_owner_id = :conference_owner_id
+              WHERE conference_id = :conference_id
+              LIMIT 1";
+        $query = $database->prepare($sql);
+        $query->execute(array(
+            ':title' => $conferenceTitle,
+            ':venue_id' => $conferenceVenueId,
+            ':conference_owner_id' => $conferenceOwnerId,
+            ':conference_id' => $confId));
+
+        $count = $query->rowCount();
+        echo $count;
+        if ($count == 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function deleteConferenceFromDB(int $conferenceId)
+    {
+        $database = DbFactory::getFactory()->getConnection();
+
+        // write new users data into database
+        $sql = "DELETE FROM conferences WHERE conference_id = :conference_id LIMIT 1";
+        $query = $database->prepare($sql);
+        $query->execute(array(':conference_id' => $conferenceId));
         $count =  $query->rowCount();
         if ($count == 1) {
             return true;
