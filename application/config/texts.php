@@ -9,7 +9,8 @@ return array(
 
     "COOKIE_INVALID" => "Your remember-me-cookie is invalid.",
     "COOKIE_LOGIN_SUCCESSFUL" => "You were successfully logged in via the remember-me-cookie.",
-
+    "CONFERENCE_FIELD_EMPTY" => "Conference title or conference venue were empty.",
+    "CONFERENCE_ALREADY_EXISTS" => "Conference by this title already exists.",
     "LOGIN_FAILED_ATTEMPTS" => "Login failed 3 or more times already. Please wait 30 seconds to try again.",
 
     "PASSWORD_WRONG_ATTEMPTS" => "You have typed in a wrong password 3 or more times. Please wait 30 seconds to try again.",

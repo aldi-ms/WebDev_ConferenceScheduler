@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Conference Scheduler</title>
@@ -44,6 +44,7 @@
                         <li><a href="<?php echo Config::get('URL'); ?>login/register">Register</a></li><?php
                     } ?>
                     <li><a href="#">Placeholder</a></li>
+                    <!-- User profile -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Profile <span class="caret"></span></a>
                         <ul class="dropdown-menu">
@@ -52,13 +53,23 @@
                             <li><a href="<?php echo Config::get('URL'); ?>login/logout">Logout</a></li>
                         </ul>
                     </li>
+                    <!-- Conferences -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Conferences <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="<?php echo Config::get('URL'); ?>conference">Show all conferences</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="<?php echo Config::get('URL'); ?>conference/create">Create new conference</a></li>
+                        </ul>
+                    </li>
                 </ul>
 
-                <!-- show logged in user here -->
+                <!-- show logged in user info here -->
                 <ul class="nav navbar-nav navbar-right">
-                    <?php if (LoginModel::isUserLoggedIn()) {
-                        ?>
-                        <p class="navbar-text">Signed in as <?php  ?></p><?php
+                    <?php if (LoginModel::isUserLoggedIn()) {?>
+                        <p class="navbar-text">Signed in as <?= Session::get("user_name"); ?>
+                    <?php if (Session::get("user_account_type") == 7) : ?>- administrator
+                    <?php endif; ?></p><?php
                     } ?>
                     <li><a href="#">Placeholder</a></li>
                     <li class="dropdown">
@@ -76,12 +87,5 @@
         </div><!-- /.container-fluid -->
     </nav>
 
-    <!-- my account -->
-    <ul class="navigation right">
-        <?php if (Session::userIsLoggedIn()) : ?>
-            <span class="label label-info">User is logged in.</span>
-            <?php if (Session::get("user_account_type") == 7) : ?>
-                <span class="label label-info">User is admin.</span>
-            <?php endif; ?>
-        <?php endif; ?>
-    </ul>
+    <!-- echo out the system feedback (error and success messages) -->
+    <?php $this->renderFeedbackMessages(); ?>

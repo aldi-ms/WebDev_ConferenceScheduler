@@ -1,0 +1,1 @@
+ALTER TABLE `confscheduler`.`conferences` ADD COLUMN `title` VARCHAR(255) NOT NULL UNIQUE AFTER `conference_owner_id`
