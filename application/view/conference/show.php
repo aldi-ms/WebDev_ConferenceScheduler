@@ -10,9 +10,9 @@
             Lectures:
     <?php
     foreach($data as $row) { ?>
-        <?php if (!empty($row['speaker_name']) && !empty($row['lecture_title'])) { ?>
+        <?php if (true) { ?>
             <br />
-        <?= $row['lecture_title'] ?> with speaker <strong><?= $row['speaker_name']; ?></strong>, starts at
+        <?= $row['lecture_title'] ?><?php if(!empty($row['speaker_name'])) {?> with speaker <strong><?= $row['speaker_name']; ?></strong><?php } ?>, starts at
         <?=date('H:i d.m.Y', $row['lecture_start']); ?>, ends at <?= date('H:i d.m.Y', $row['lecture_end']); ?>
     <?php }
         else { ?>
