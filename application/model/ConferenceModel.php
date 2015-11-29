@@ -40,12 +40,32 @@ class ConferenceModel
         return false;
     }
 
+    public static function getConferenceById(int $id)
+    {
+        $database = DbFactory::getFactory()->getConnection();
+
+        $sql = "SELECT c.conference_id, c.title AS conference_title, u.user_name AS created_by_user_name,
+                  u.user_email AS created_by_user_email, v.venue_name, l.title AS lecture_title, lu.user_name AS speaker_name,
+                  l.start_timestamp AS lecture_start, l.end_timestamp AS lecture_end
+                  FROM conferences AS c
+                 INNER JOIN users AS u ON u.user_id = c.conference_owner_id
+                 INNER JOIN venues AS v ON v.venue_id = c.venue_id
+                 LEFT JOIN lectures AS l ON l.conference_id = c.conference_id
+                 LEFT JOIN users AS lu ON l.speaker_id = lu.user_id
+                 WHERE c.conference_id = :conference_id AND c.deleted = 0";
+
+        $query = $database->prepare($sql);
+        $query->execute(array(':conference_id' => $id));
+
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public static function getConferenceByTitle(string $title)
     {
         $database = DbFactory::getFactory()->getConnection();
-        $sql = "SELECT conference_id, conference_owner_id, title, venue_id, deleted
+        $sql = "SELECT conference_id, conference_owner_id, title, venue_id
                   FROM conferences
-                 WHERE title = :title
+                 WHERE title = :title AND deleted = 0
                  LIMIT 1";
 
         $query = $database->prepare($sql);

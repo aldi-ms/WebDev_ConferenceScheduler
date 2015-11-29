@@ -6,6 +6,12 @@
     foreach($data as $row) { ?>
         <div class="panel panel-primary">
             <div class="panel-heading">
+                <div class="btn-group btn-group-xs pull-right" role="group" aria-label="...">
+                    <a href="<?php echo Config::get('URL'); ?>conference/show/<?= $row["conference_id"] ?>" class="btn btn-default">View</a>
+                    <?php if (Session::get('user_id') == $row["user_id"] || Session::get('user_account_type') == 7) { ?>
+                    <a href="<?php echo Config::get('URL'); ?>conference/edit/<?= $row["conference_id"] ?>" class="btn btn-default">Edit</a>
+                    <?php } ?>
+                </div>
                 <h3 class="panel-title"><?= $row['title']; ?></h3>
             </div>
             <div class="panel-body">Venue: <?= $row['venue_name']; ?></div>

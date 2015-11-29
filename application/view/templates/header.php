@@ -38,12 +38,12 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <!-- selection is marked with class="active" -->
                     <?php if (!LoginModel::isUserLoggedIn()) {
                         ?><li><a href="<?php echo Config::get('URL'); ?>login">Login</a></li>
                         <li><a href="<?php echo Config::get('URL'); ?>login/register">Register</a></li><?php
                     } ?>
-                    <li><a href="#">Placeholder</a></li>
+
+                    <?php if (Session::userIsLoggedIn()) { ?>
                     <!-- User profile -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Profile <span class="caret"></span></a>
@@ -63,6 +63,7 @@
                         </ul>
                     </li>
                 </ul>
+                <?php }?>
 
                 <!-- show logged in user info here -->
                 <ul class="nav navbar-nav navbar-right">
@@ -71,17 +72,6 @@
                     <?php if (Session::get("user_account_type") == 7) : ?>- administrator
                     <?php endif; ?></p><?php
                     } ?>
-                    <li><a href="#">Placeholder</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Placeholder Dropdown <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="#">Separated link</a></li>
-                        </ul>
-                    </li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->

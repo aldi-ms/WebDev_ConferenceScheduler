@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `confscheduler`.`lectures`(
   `start_timestamp` BIGINT NOT NULL,
   `end_timestamp` BIGINT NOT NULL,
   PRIMARY KEY (`lecture_id`),
-  FOREIGN KEY speaker_id (`speaker_id`) REFERENCES `confscheduler`.`users` (`user_id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  FOREIGN KEY speaker_id (`speaker_id`) REFERENCES `confscheduler`.`users` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   FOREIGN KEY conference_id (`conference_id`) REFERENCES `confscheduler`.`conferences` (`conference_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

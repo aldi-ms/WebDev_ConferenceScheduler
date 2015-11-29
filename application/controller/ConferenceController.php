@@ -30,4 +30,10 @@ class ConferenceController extends Controller
             Redirect::to('conference/create');
         }
     }
+
+    public function show(string $confId)
+    {
+        $data = ConferenceModel::getConferenceById((int)$confId);
+        $this->view->render('conference/show', $data);
+    }
 }
